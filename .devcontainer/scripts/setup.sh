@@ -1,5 +1,5 @@
 #!/bin/bash
-# postCreateCommand — ตั้งค่า git config และ proxy จากไฟล์ .env.local
+# postCreateCommand — ตั้งค่า git config, proxy, และติดตั้ง Claude Code CLI
 
 ENV_FILE="/workspace/.env.local"
 
@@ -25,14 +25,31 @@ else
 fi
 
 # ─── npm proxy ─────────────────────────────────────────────────────────────────
+# รับ proxy จาก environment (ที่ devcontainer.json ส่งมาจาก localEnv)
 if [ -n "$HTTP_PROXY" ]; then
   npm config set proxy "$HTTP_PROXY"
   npm config set https-proxy "${HTTPS_PROXY:-$HTTP_PROXY}"
   npm config set noproxy "${NO_PROXY:-localhost,127.0.0.1}"
   echo "✅ npm proxy: $HTTP_PROXY"
 else
-  # ล้าง proxy config เผื่อ rebuild แล้วไม่ใช้ proxy
   npm config delete proxy 2>/dev/null || true
   npm config delete https-proxy 2>/dev/null || true
   echo "ℹ️  ไม่ใช้ proxy"
+fi
+
+# ─── Claude Code CLI ───────────────────────────────────────────────────────────
+if ! command -v claude &>/dev/null; then
+  echo "📦 กำลังติดตั้ง Claude Code CLI..."
+  npm install -g --no-fund --no-audit @anthropic-ai/claude-code \
+    && echo "✅ Claude Code CLI ติดตั้งเรียบร้อย" \
+    || echo "❌ ติดตั้ง Claude Code CLI ไม่สำเร็จ ลองรัน: npm install -g @anthropic-ai/claude-code"
+else
+  echo "✅ Claude Code CLI พร้อมใช้งาน ($(claude --version 2>/dev/null || echo 'installed'))"
+fi
+
+if ! command -v ccusage &>/dev/null; then
+  echo "📦 กำลังติดตั้ง ccusage..."
+  npm install -g --no-fund --no-audit ccusage@latest \
+    && echo "✅ ccusage ติดตั้งเรียบร้อย" \
+    || echo "⚠️  ccusage ติดตั้งไม่สำเร็จ (ไม่บังคับ)"
 fi

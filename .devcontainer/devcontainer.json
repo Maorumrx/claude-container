@@ -5,7 +5,6 @@
     "context": ".",
     "args": {
       "NODE_VERSION": "24",
-      "INSTALL_CLAUDE_CLI": "true",
       "TZ": "Asia/Bangkok",
       // อ่าน proxy จาก env ของเครื่อง host อัตโนมัติ
       // ถ้าไม่ได้ set ไว้ใน host จะเป็นค่าว่าง = ไม่ใช้ proxy

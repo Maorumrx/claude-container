@@ -83,12 +83,5 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
   -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   -x
 
-# ─── Claude Code CLI (วางท้ายสุดเพราะ update บ่อย) ────────────────────────────
-ARG INSTALL_CLAUDE_CLI=true
-RUN if [ "$INSTALL_CLAUDE_CLI" = "true" ]; then \
-  npm install -g --no-fund --no-audit --prefer-offline @anthropic-ai/claude-code || \
-  npm install -g --no-fund --no-audit @anthropic-ai/claude-code; \
-  fi
-RUN if [ "$INSTALL_CLAUDE_CLI" = "true" ]; then \
-  npm install -g --no-fund --no-audit ccusage@latest || true; \
-  fi
+# Claude Code CLI จะถูก install ใน postCreateCommand (setup.sh)
+# เพื่อให้ proxy ทำงานได้ถูกต้องและไม่ block Docker build
