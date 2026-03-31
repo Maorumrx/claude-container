@@ -6,7 +6,12 @@
     "args": {
       "NODE_VERSION": "24",
       "INSTALL_CLAUDE_CLI": "true",
-      "TZ": "Asia/Bangkok"
+      "TZ": "Asia/Bangkok",
+      // ถ้าต้องการ proxy: ใส่ค่า เช่น "http://192.168.1.1:3128"
+      // ถ้าไม่ใช้ proxy: ปล่อยว่างไว้ได้เลย
+      "HTTP_PROXY": "",
+      "HTTPS_PROXY": "",
+      "NO_PROXY": "localhost,127.0.0.1"
     }
   },
   "customizations": {

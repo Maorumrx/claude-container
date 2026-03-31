@@ -1,5 +1,5 @@
 #!/bin/bash
-# postCreateCommand — ตั้งค่า git config จากไฟล์ .env.local
+# postCreateCommand — ตั้งค่า git config และ proxy จากไฟล์ .env.local
 
 ENV_FILE="/workspace/.env.local"
 
@@ -15,10 +15,24 @@ fi
 # อ่านค่าจากไฟล์ (ข้ามบรรทัดที่เป็น comment หรือว่างเปล่า)
 export $(grep -v '^\s*#' "$ENV_FILE" | grep -v '^\s*$' | xargs)
 
+# ─── Git config ────────────────────────────────────────────────────────────────
 if [ -n "$GIT_CONFIG_EMAIL" ] && [ -n "$GIT_CONFIG_NAME" ]; then
   git config --global user.email "$GIT_CONFIG_EMAIL"
   git config --global user.name "$GIT_CONFIG_NAME"
-  echo "✅ Git config ตั้งค่าเรียบร้อย: $GIT_CONFIG_NAME <$GIT_CONFIG_EMAIL>"
+  echo "✅ Git config: $GIT_CONFIG_NAME <$GIT_CONFIG_EMAIL>"
 else
   echo "⚠️  GIT_CONFIG_EMAIL หรือ GIT_CONFIG_NAME ไม่ได้กรอกใน .env.local"
+fi
+
+# ─── npm proxy ─────────────────────────────────────────────────────────────────
+if [ -n "$HTTP_PROXY" ]; then
+  npm config set proxy "$HTTP_PROXY"
+  npm config set https-proxy "${HTTPS_PROXY:-$HTTP_PROXY}"
+  npm config set noproxy "${NO_PROXY:-localhost,127.0.0.1}"
+  echo "✅ npm proxy: $HTTP_PROXY"
+else
+  # ล้าง proxy config เผื่อ rebuild แล้วไม่ใช้ proxy
+  npm config delete proxy 2>/dev/null || true
+  npm config delete https-proxy 2>/dev/null || true
+  echo "ℹ️  ไม่ใช้ proxy"
 fi
