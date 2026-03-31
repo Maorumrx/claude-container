@@ -50,8 +50,9 @@
   "remoteUser": "node",
   "mounts": [
     "source=claude-code-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
-    // Windows: เปลี่ยน HOME → USERPROFILE
-    "source=${localEnv:HOME}/.claude,target=/home/node/.claude,type=bind,consistency=delegated"
+    // Windows (default): ใช้ USERPROFILE เช่น C:\Users\YourName
+    "source=${localEnv:USERPROFILE}/.claude,target=/home/node/.claude,type=bind,consistency=delegated"
+    // Mac / Linux: เปลี่ยนบรรทัดบนเป็น → "source=${localEnv:HOME}/.claude,target=/home/node/.claude,type=bind,consistency=delegated"
   ],
   "remoteEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",

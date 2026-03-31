@@ -83,18 +83,18 @@ claude --version
 
 ---
 
-## Windows — ข้อควรระวัง
+## Mac / Linux — ข้อควรระวัง
 
-ไฟล์ `devcontainer.json` บรรทัด mount `.claude` ใช้ `${localEnv:HOME}` ซึ่งใช้ได้บน Mac/Linux
+ค่า default ในไฟล์ `.devcontainer/devcontainer.json` ตั้งมาสำหรับ **Windows** (`USERPROFILE`)
 
-บน **Windows** ให้แก้ไฟล์ `devcontainer.json` บรรทัดนี้:
+บน **Mac / Linux** ให้แก้ไฟล์ `.devcontainer/devcontainer.json` บรรทัด mount:
 
 ```jsonc
 // เปลี่ยนจาก
-"source=${localEnv:HOME}/.claude, ..."
+"source=${localEnv:USERPROFILE}/.claude, ..."
 
 // เป็น
-"source=${localEnv:USERPROFILE}/.claude, ..."
+"source=${localEnv:HOME}/.claude, ..."
 ```
 
 ---
