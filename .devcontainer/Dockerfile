@@ -66,6 +66,9 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
 # ─── Claude Code CLI (วางท้ายสุดเพราะ update บ่อย) ────────────────────────────
 ARG INSTALL_CLAUDE_CLI=true
 RUN if [ "$INSTALL_CLAUDE_CLI" = "true" ]; then \
-  npm install -g @anthropic-ai/claude-code; \
-  npm install -g ccusage@latest; \
+  npm install -g --no-fund --no-audit --prefer-offline @anthropic-ai/claude-code || \
+  npm install -g --no-fund --no-audit @anthropic-ai/claude-code; \
+  fi
+RUN if [ "$INSTALL_CLAUDE_CLI" = "true" ]; then \
+  npm install -g --no-fund --no-audit ccusage@latest || true; \
   fi
