@@ -66,14 +66,6 @@ ENV NPM_CONFIG_PREFIX=/usr/local/share/npm-global
 ENV PATH=$PATH:/usr/local/share/npm-global/bin
 ENV SHELL=/bin/zsh
 
-# ─── npm proxy config (ถ้ามี proxy จะ set อัตโนมัติ) ─────────────────────────
-RUN if [ -n "$HTTP_PROXY" ]; then \
-  npm config set proxy "$HTTP_PROXY"; \
-  npm config set https-proxy "$HTTPS_PROXY"; \
-  npm config set noproxy "$NO_PROXY"; \
-  echo "npm proxy set to $HTTP_PROXY"; \
-  fi
-
 # ─── ZSH + Powerlevel10k ───────────────────────────────────────────────────────
 RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.0/zsh-in-docker.sh)" -- \
   -p git \

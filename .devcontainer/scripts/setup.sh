@@ -24,16 +24,20 @@ else
   echo "⚠️  GIT_CONFIG_EMAIL หรือ GIT_CONFIG_NAME ไม่ได้กรอกใน .env.local"
 fi
 
-# ─── npm proxy ─────────────────────────────────────────────────────────────────
-# รับ proxy จาก environment (ที่ devcontainer.json ส่งมาจาก localEnv)
+# ─── npm proxy + SSL ───────────────────────────────────────────────────────────
+# อ่านจาก environment ที่ devcontainer.json ส่งมาจาก localEnv (ไม่ใช้จาก .env.local)
+# ล้าง config เก่าก่อนทุกครั้งเพื่อป้องกัน stale value
+npm config delete proxy 2>/dev/null || true
+npm config delete https-proxy 2>/dev/null || true
+npm config delete noproxy 2>/dev/null || true
+npm config set strict-ssl false  # รองรับ corporate proxy ที่ทำ SSL inspection
+
 if [ -n "$HTTP_PROXY" ]; then
   npm config set proxy "$HTTP_PROXY"
   npm config set https-proxy "${HTTPS_PROXY:-$HTTP_PROXY}"
-  npm config set noproxy "${NO_PROXY:-localhost,127.0.0.1}"
+  [ -n "$NO_PROXY" ] && npm config set noproxy "$NO_PROXY"
   echo "✅ npm proxy: $HTTP_PROXY"
 else
-  npm config delete proxy 2>/dev/null || true
-  npm config delete https-proxy 2>/dev/null || true
   echo "ℹ️  ไม่ใช้ proxy"
 fi
 
@@ -44,7 +48,7 @@ if ! command -v claude &>/dev/null; then
     && echo "✅ Claude Code CLI ติดตั้งเรียบร้อย" \
     || echo "❌ ติดตั้ง Claude Code CLI ไม่สำเร็จ ลองรัน: npm install -g @anthropic-ai/claude-code"
 else
-  echo "✅ Claude Code CLI พร้อมใช้งาน ($(claude --version 2>/dev/null || echo 'installed'))"
+  echo "✅ Claude Code CLI พร้อมใช้งาน"
 fi
 
 if ! command -v ccusage &>/dev/null; then
