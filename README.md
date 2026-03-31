@@ -83,18 +83,52 @@ claude --version
 
 ---
 
-## Mac / Linux — ข้อควรระวัง
+## Windows (PowerShell/CMD) — ข้อควรระวัง
 
-ค่า default ในไฟล์ `.devcontainer/devcontainer.json` ตั้งมาสำหรับ **Windows** (`USERPROFILE`)
+ค่า default ใน `.devcontainer/devcontainer.json` ตั้งมาสำหรับ **WSL / Mac / Linux** (`HOME`)
 
-บน **Mac / Linux** ให้แก้ไฟล์ `.devcontainer/devcontainer.json` บรรทัด mount:
+ถ้ารันจาก **Windows PowerShell หรือ CMD** (ไม่ใช่ WSL) ให้แก้บรรทัด mount:
 
 ```jsonc
 // เปลี่ยนจาก
-"source=${localEnv:USERPROFILE}/.claude, ..."
+"source=${localEnv:HOME}/.claude, ..."
 
 // เป็น
-"source=${localEnv:HOME}/.claude, ..."
+"source=${localEnv:USERPROFILE}/.claude, ..."
+```
+
+---
+
+## รันด้วย Dev Container CLI (WSL / Terminal)
+
+ใช้วิธีนี้แทนการกด "Reopen in Container" ใน VS Code ได้เลย
+
+### ติดตั้ง CLI (ครั้งแรกครั้งเดียว)
+
+```bash
+npm install -g @devcontainers/cli
+```
+
+### รัน Container
+
+```bash
+# เข้าโฟลเดอร์โปรเจกต์ก่อน
+cd /path/to/your-project
+
+# build + start container
+devcontainer up --workspace-folder .
+```
+
+### เปิด VS Code เชื่อมต่อกับ Container ที่รันอยู่
+
+```bash
+devcontainer open .
+```
+
+### รันคำสั่งใน Container โดยตรง (ไม่ต้องเปิด VS Code)
+
+```bash
+devcontainer exec --workspace-folder . zsh
 ```
 
 ---
