@@ -1,13 +1,11 @@
 {
-  "name": "Pathfinder Dev Container",
+  "name": "Claude Dev Container",
   "build": {
     "dockerfile": "Dockerfile",
     "context": ".",
     "args": {
       "NODE_VERSION": "24",
       "INSTALL_CLAUDE_CLI": "true",
-      "GIT_CONFIG_EMAIL": "maoru_mrx@hotmail.com",
-      "GIT_CONFIG_NAME": "maorumrx",
       "TZ": "Asia/Bangkok"
     }
   },
@@ -43,13 +41,8 @@
         },
         "terminal.integrated.defaultProfile.linux": "zsh",
         "terminal.integrated.profiles.linux": {
-          "bash": {
-            "path": "bash",
-            "icon": "terminal-bash"
-          },
-          "zsh": {
-            "path": "zsh"
-          }
+          "bash": { "path": "bash", "icon": "terminal-bash" },
+          "zsh": { "path": "zsh" }
         }
       }
     }
@@ -57,8 +50,8 @@
   "remoteUser": "node",
   "mounts": [
     "source=claude-code-bashhistory-${devcontainerId},target=/commandhistory,type=volume",
-    // "source=${localEnv:USERPROFILE}/.claude,target=/home/node/.claude,type=bind,consistency=delegated" // For Windows users, use USERPROFILE instead of HOME
-    "source=${localEnv:HOME}/.claude,target=/home/node/.claude,type=bind,consistency=delegated" // For Linux/Mac users, use HOME
+    // Windows: เปลี่ยน HOME → USERPROFILE
+    "source=${localEnv:HOME}/.claude,target=/home/node/.claude,type=bind,consistency=delegated"
   ],
   "remoteEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
@@ -67,12 +60,13 @@
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",
+  "postCreateCommand": "bash /workspace/.devcontainer/scripts/setup.sh",
   "forwardPorts": [80, 443, 3306, 6379, 6001],
   "portsAttributes": {
-    "80": { "label": "Nginx HTTP", "onAutoForward": "notify" },
-    "443": { "label": "Nginx HTTPS", "onAutoForward": "silent" },
-    "3306": { "label": "MySQL", "onAutoForward": "silent" },
-    "6379": { "label": "Redis", "onAutoForward": "silent" },
-    "6001": { "label": "Soketi WebSocket", "onAutoForward": "silent" }
+    "80":   { "label": "Nginx HTTP",        "onAutoForward": "notify"  },
+    "443":  { "label": "Nginx HTTPS",       "onAutoForward": "silent"  },
+    "3306": { "label": "MySQL",             "onAutoForward": "silent"  },
+    "6379": { "label": "Redis",             "onAutoForward": "silent"  },
+    "6001": { "label": "Soketi WebSocket",  "onAutoForward": "silent"  }
   }
 }

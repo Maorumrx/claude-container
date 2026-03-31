@@ -5,7 +5,7 @@ ARG TZ=Asia/Bangkok
 ENV TZ="$TZ"
 ENV DEVCONTAINER=true
 
-# ─── System packages (cache layer — เปลี่ยนน้อยมาก) ───────────────────────────
+# ─── System packages ───────────────────────────────────────────────────────────
 RUN apt-get update && apt-get install -y \
   less \
   git \
@@ -22,11 +22,11 @@ RUN apt-get update && apt-get install -y \
   dnsutils \
   && rm -rf /var/lib/apt/lists/*
 
-# Python (แยก layer เพราะ --fix-missing อาจ fail แล้ว fallback)
+# Python
 RUN apt-get update && apt-get install -y --fix-missing python3-full python3-pip || true \
   && rm -rf /var/lib/apt/lists/*
 
-# ─── git-delta (cache layer) ───────────────────────────────────────────────────
+# ─── git-delta ─────────────────────────────────────────────────────────────────
 RUN ARCH=$(dpkg --print-architecture) && \
   wget -q "https://github.com/dandavison/delta/releases/download/0.18.2/git-delta_0.18.2_${ARCH}.deb" && \
   dpkg -i "git-delta_0.18.2_${ARCH}.deb" && \
@@ -54,8 +54,7 @@ ENV NPM_CONFIG_PREFIX=/usr/local/share/npm-global
 ENV PATH=$PATH:/usr/local/share/npm-global/bin
 ENV SHELL=/bin/zsh
 
-# ─── ZSH + Powerlevel10k (cache layer — ไม่ต้อง rebuild ถ้าไม่เปลี่ยน) ────────
-# ใช้ hash ตาย version ป้องกัน re-download โดยไม่จำเป็น
+# ─── ZSH + Powerlevel10k ───────────────────────────────────────────────────────
 RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/v1.2.0/zsh-in-docker.sh)" -- \
   -p git \
   -p fzf \
@@ -64,16 +63,9 @@ RUN sh -c "$(wget -O- https://github.com/deluan/zsh-in-docker/releases/download/
   -a "export PROMPT_COMMAND='history -a' && export HISTFILE=/commandhistory/.bash_history" \
   -x
 
-# ─── Claude Code CLI (cache layer — แยก ARG ไว้ท้ายสุด) ──────────────────────
-# วางไว้ท้ายสุดเพราะเปลี่ยนบ่อย (version update) จะได้ไม่ invalidate layer ข้างบน
+# ─── Claude Code CLI (วางท้ายสุดเพราะ update บ่อย) ────────────────────────────
 ARG INSTALL_CLAUDE_CLI=true
 RUN if [ "$INSTALL_CLAUDE_CLI" = "true" ]; then \
   npm install -g @anthropic-ai/claude-code; \
   npm install -g ccusage@latest; \
   fi
-
-# ─── Git config (ทำท้ายสุด เพราะเปลี่ยนได้บ่อย) ──────────────────────────────
-ARG GIT_CONFIG_EMAIL="user@example.com"
-ARG GIT_CONFIG_NAME="Developer"
-RUN git config --global user.email "$GIT_CONFIG_EMAIL" && \
-  git config --global user.name "$GIT_CONFIG_NAME"
