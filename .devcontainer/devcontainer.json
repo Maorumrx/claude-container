@@ -7,11 +7,11 @@
       "NODE_VERSION": "24",
       "INSTALL_CLAUDE_CLI": "true",
       "TZ": "Asia/Bangkok",
-      // ถ้าต้องการ proxy: ใส่ค่า เช่น "http://192.168.1.1:3128"
-      // ถ้าไม่ใช้ proxy: ปล่อยว่างไว้ได้เลย
-      "HTTP_PROXY": "",
-      "HTTPS_PROXY": "",
-      "NO_PROXY": "localhost,127.0.0.1"
+      // อ่าน proxy จาก env ของเครื่อง host อัตโนมัติ
+      // ถ้าไม่ได้ set ไว้ใน host จะเป็นค่าว่าง = ไม่ใช้ proxy
+      "HTTP_PROXY": "${localEnv:HTTP_PROXY}",
+      "HTTPS_PROXY": "${localEnv:HTTPS_PROXY}",
+      "NO_PROXY": "${localEnv:NO_PROXY}"
     }
   },
   "customizations": {
@@ -62,7 +62,13 @@
   "remoteEnv": {
     "NODE_OPTIONS": "--max-old-space-size=4096",
     "CLAUDE_CONFIG_DIR": "/home/node/.claude",
-    "POWERLEVEL9K_DISABLE_GITSTATUS": "true"
+    "POWERLEVEL9K_DISABLE_GITSTATUS": "true",
+    "HTTP_PROXY": "${localEnv:HTTP_PROXY}",
+    "HTTPS_PROXY": "${localEnv:HTTPS_PROXY}",
+    "http_proxy": "${localEnv:HTTP_PROXY}",
+    "https_proxy": "${localEnv:HTTPS_PROXY}",
+    "NO_PROXY": "${localEnv:NO_PROXY}",
+    "no_proxy": "${localEnv:NO_PROXY}"
   },
   "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",

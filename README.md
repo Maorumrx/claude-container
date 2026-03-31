@@ -150,26 +150,25 @@ devcontainer exec --workspace-folder . zsh
 
 ## ใช้งานผ่าน Proxy
 
-เปิดไฟล์ `.env.local` แล้วเพิ่ม:
+Container จะอ่าน proxy จาก environment variable ของเครื่อง host **อัตโนมัติ** ไม่ต้องกรอกซ้ำ
 
-```env
-HTTP_PROXY=http://proxy.example.com:3128
-HTTPS_PROXY=http://proxy.example.com:3128
-NO_PROXY=localhost,127.0.0.1
+ถ้ายังไม่ได้ set ให้ set ใน host ก่อน:
+
+```bash
+# WSL / Linux / Mac — ใส่ใน ~/.bashrc หรือ ~/.zshrc
+export HTTP_PROXY=http://proxy.example.com:3128
+export HTTPS_PROXY=http://proxy.example.com:3128
+export NO_PROXY=localhost,127.0.0.1
+
+# Windows (PowerShell)
+$env:HTTP_PROXY="http://proxy.example.com:3128"
+$env:HTTPS_PROXY="http://proxy.example.com:3128"
+$env:NO_PROXY="localhost,127.0.0.1"
 ```
 
-`setup.sh` จะ set npm proxy ให้อัตโนมัติตอน container สร้างเสร็จ
+จากนั้น build container ได้เลย — proxy จะมีผลทั้งตอน build (`apt-get`, `wget`, `npm`) และตอนใช้งานใน container
 
-ถ้าต้องการให้ proxy มีผลตั้งแต่ตอน **build image** ด้วย (เช่น `apt-get`, `wget`) ให้ใส่ใน `.devcontainer/devcontainer.json` ด้วย:
-
-```jsonc
-"build": {
-  "args": {
-    "HTTP_PROXY": "http://proxy.example.com:3128",
-    "HTTPS_PROXY": "http://proxy.example.com:3128"
-  }
-}
-```
+ถ้าไม่ได้ set ตัวแปรเหล่านี้ไว้ใน host → container จะทำงานโดยไม่มี proxy โดยอัตโนมัติ
 
 ---
 
